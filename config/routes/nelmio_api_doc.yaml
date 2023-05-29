@@ -1,4 +1,3 @@
-# Expose your documentation as JSON swagger compliant
 app.swagger:
     path: /api/doc.json
     methods: GET

@@ -1,17 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Exception\ApiException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class ApiController extends AbstractController
 {
-    protected function errorResponse(Throwable $exception, int $status, array $headers = []): JsonResponse
+    /**
+     * @param Throwable $exception
+     * @param int $status
+     * @param array $headers
+     * @return Response
+     */
+    protected function errorResponse(Throwable $exception, int $status, array $headers = []): Response
     {
         if ($exception instanceof ApiException) {
             return $this->json($exception->toArray(), $status, $headers);
@@ -24,6 +31,10 @@ class ApiController extends AbstractController
         return $this->json($data, $status, $headers);
     }
 
+    /**
+     * @param FormInterface $form
+     * @return array
+     */
     protected function gatherFormErrors(FormInterface $form): array
     {
         if (!$form->isSubmitted()) {
@@ -60,14 +71,21 @@ class ApiController extends AbstractController
     }
 
     /**
-     * @param string[] $headers
+     * @param int $status
+     * @param array $headers
+     * @return Response
      */
-    protected function emptyResponse(int $status = Response::HTTP_OK, array $headers = []): JsonResponse
+    protected function emptyResponse(int $status = Response::HTTP_OK, array $headers = []): Response
     {
-        return new JsonResponse(null, $status, $headers);
+        return $this->json(null, $status, $headers);
     }
 
-    protected function apiErrorResponse(int $status, $errors = []): JsonResponse
+    /**
+     * @param int $status
+     * @param array $errors
+     * @return Response
+     */
+    protected function apiErrorResponse(int $status, array $errors = []): Response
     {
         return $this->json($errors, $status);
     }

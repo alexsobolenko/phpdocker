@@ -1,13 +1,20 @@
 <?php
 
-namespace Unit\Validator;
+declare(strict_types=1);
 
-use App\Validator\CouponCodeConstraint;
-use App\Validator\CouponCodeConstraintValidator;
+namespace App\Tests\Unit\Validator;
+
+use App\Validator\CouponCode\CouponCodeConstraint;
+use App\Validator\CouponCode\CouponCodeConstraintValidator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
+/**
+ * @group validator
+ * @group coupon_code
+ * @group validator.coupon_code
+ */
 class CouponCodeConstraintValidatorTest extends TestCase
 {
     protected function setUp(): void

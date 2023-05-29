@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Service\Payment;
+declare(strict_types=1);
 
-use Exception;
+namespace App\Service\Payment;
 
 class PaypalPaymentProcessor implements InterfacePayment
 {
     /**
-     * @throws Exception in case of a failed payment
+     * @param int $price
+     * @throws \Exception
      */
     public function processPayment(int $price): void
     {
         if ($price > 100) {
-            throw new Exception('Too high price');
+            throw new \Exception('Too high price');
         }
     }
 }

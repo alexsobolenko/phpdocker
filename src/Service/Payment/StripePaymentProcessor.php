@@ -1,20 +1,21 @@
 <?php
 
-namespace App\Service\Payment;
+declare(strict_types=1);
 
-use Exception;
+namespace App\Service\Payment;
 
 class StripePaymentProcessor implements InterfacePayment
 {
     /**
-     * @throws Exception in case of a failed payment
+     * @param int $price
+     * @throws \Exception
      */
     public function processPayment(int $price): void
     {
         if ($price < 10) {
-            throw new Exception('Too low price');
+            throw new \Exception('Too low price');
         }
 
-        //process payment logic
+        // process payment logic
     }
 }

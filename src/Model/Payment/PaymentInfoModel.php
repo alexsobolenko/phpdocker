@@ -1,33 +1,50 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Model\Payment;
 
 class PaymentInfoModel
 {
+    /**
+     * @var string|null
+     */
     private ?string $productName;
+
+    /**
+     * @var float|null
+     */
     private ?float $price;
 
+    /**
+     * @return string|null
+     */
     public function getProductName(): ?string
     {
         return $this->productName;
     }
 
-    public function setProductName(?string $productName): self
+    /**
+     * @param string|null $productName
+     */
+    public function setProductName(?string $productName): void
     {
         $this->productName = $productName;
-
-        return $this;
     }
 
+    /**
+     * @return float|null
+     */
     public function getPrice(): ?float
     {
         return $this->price;
     }
 
-    public function setPrice(?float $price): self
+    /**
+     * @param float|null $price
+     */
+    public function setPrice(?float $price): void
     {
         $this->price = $price;
-
-        return $this;
     }
 }

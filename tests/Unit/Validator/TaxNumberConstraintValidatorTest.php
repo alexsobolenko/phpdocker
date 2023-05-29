@@ -1,13 +1,20 @@
 <?php
 
-namespace Unit\Validator;
+declare(strict_types=1);
 
-use App\Validator\TaxNumberConstraint;
-use App\Validator\TaxNumberConstraintValidator;
+namespace App\Tests\Unit\Validator;
+
+use App\Validator\TaxNumber\TaxNumberConstraint;
+use App\Validator\TaxNumber\TaxNumberConstraintValidator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
+/**
+ * @group validator
+ * @group tax_number
+ * @group validator.tax_number
+ */
 class TaxNumberConstraintValidatorTest extends TestCase
 {
     protected function setUp(): void
@@ -54,21 +61,16 @@ class TaxNumberConstraintValidatorTest extends TestCase
         $this->validator->validate('SS124125', new TaxNumberConstraint());
     }
 
+    /**
+     * @return array
+     */
     public function taxNumberProvider(): array
     {
         return [
-            [
-                'DE123456789',
-            ],
-            [
-                'IT12345678910',
-            ],
-            [
-                'GR123456789',
-            ],
-            [
-                'FRZZ123456789',
-            ],
+            ['DE123456789'],
+            ['IT12345678910'],
+            ['GR123456789'],
+            ['FRZZ123456789'],
         ];
     }
 }

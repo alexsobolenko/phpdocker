@@ -1,35 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service\Payment;
 
 use App\Entity\Product;
 
 class PaymentProviderService
 {
-    /**
-     * Префикс купоня для фиксированной скидки
-     *
-     */
     public const COUPON_PREFIX_DIGIT = 'D';
-
-    /**
-     * Префикс купоня для скидки в процентах
-     */
     public const COUPON_PREFIX_PERCENT = 'P';
 
-    /**
-     * Paypal процессор обработки платежей
-     */
     public const PAYPAL_PAYMENT_PROCESSOR = 'paypal';
-
-    /**
-     * Stripe процессор обработки платежей
-     */
     public const STRIPE_PAYMENT_PROCESSOR = 'stripe';
 
-    /**
-     * Префиксы налоговых номеров по странам
-     */
     public const TAX_PREFIX_DE = 'DE';
     public const TAX_PREFIX_IT = 'IT';
     public const TAX_PREFIX_GR = 'GR';
@@ -40,16 +24,47 @@ class PaymentProviderService
         self::TAX_PREFIX_GR => 24,
         self::TAX_PREFIX_FR => 0,
     ];
+    public const TAX_NUMBER_REGEXP = '/^((DE{1}[0-9]{9})|(IT{1}[0-9]{11})|(GR{1}[0-9]{9})|(FR{1}[A-Z]{2}[0-9]{9}))?$/';
 
+    /**
+     * @param PaypalPaymentProcessor $paypalPaymentProcessor
+     * @param StripePaymentProcessor $stripePaymentProcessor
+     */
     public function __construct(
         private PaypalPaymentProcessor $paypalPaymentProcessor,
         private StripePaymentProcessor $stripePaymentProcessor,
-    ) {
+    ) {}
+
+    /**
+     * @return string[]
+     */
+    public static function paymentProcessorChoices(): array
+    {
+        return [
+            self::PAYPAL_PAYMENT_PROCESSOR,
+            self::STRIPE_PAYMENT_PROCESSOR,
+        ];
     }
 
-    /*
-     * При работе с деньгами лучше использовать decimal, но если под рукой его нет (PHP) и написать нет возможности
-     * работать с деньгами в копейках/центах будет неплохим решением
+    /**
+     * @param string $prefix
+     * @return bool
+     */
+    public static function isCouponPrefixValid(string $prefix): bool
+    {
+        $data = [
+            self::COUPON_PREFIX_DIGIT,
+            self::COUPON_PREFIX_PERCENT,
+        ];
+
+        return in_array($prefix, $data, true);
+    }
+
+    /**
+     * @param int $basePrice
+     * @param string|null $taxNumber
+     * @param string|null $couponCode
+     * @return float
      */
     public function calculatePrice(int $basePrice, ?string $taxNumber, ?string $couponCode): float
     {
@@ -77,7 +92,6 @@ class PaymentProviderService
         }
 
         $priceWithDiscount = $basePrice - $couponDiscount;
-
         if ($taxPercent > 0) {
             $fullPrice = round(($priceWithDiscount + ($priceWithDiscount / 100 * $taxPercent)) / 100, 2);
         } else {
@@ -88,6 +102,11 @@ class PaymentProviderService
     }
 
     /**
+     * @param Product $product
+     * @param string $paymentProcessor
+     * @param string|null $taxNumber
+     * @param string|null $couponCode
+     * @return float
      * @throws \Exception
      */
     public function providePayment(
